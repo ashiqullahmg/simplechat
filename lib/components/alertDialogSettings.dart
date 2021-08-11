@@ -66,11 +66,6 @@ class AlertDialogSettings extends StatelessWidget {
                       child: TextButton(
                         child: Text("Submit"),
                         onPressed: onPressed,
-                        // onPressed: () {
-                        //   // if (_formKey.currentState!.validate()) {
-                        //   //   _formKey.currentState!.save();
-                        //   // }
-                        // },
                       ),
                     )
                   ],

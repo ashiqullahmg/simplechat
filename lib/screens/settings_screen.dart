@@ -7,6 +7,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:simplechat/components/alertDialogSettings.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import '../main.dart';
 
 class SettingsScreen extends StatefulWidget {
   static const String id = 'settings_screen';
@@ -43,6 +48,55 @@ class _SettingsScreenState extends State<SettingsScreen> {
       appBar: AppBar(
         title: Text('Account Settings'),
         centerTitle: true,
+        actions: [
+          TextButton.icon(
+            icon: Icon(
+              Icons.logout,
+              color: Colors.redAccent,
+              size: 30.0,
+            ),
+            label: Text(''),
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      insetPadding: EdgeInsets.all(0),
+                      title: Text('Hello , $name,'),
+                      content: Text("Do you want to logout?"),
+                      actions: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(0.0),
+                              child: TextButton(
+                                child: Text("No"),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ),
+                            SizedBox(
+                              width: 6.0,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(0.0),
+                              child: TextButton(
+                                child: Text("Yes"),
+                                onPressed: () {
+                                  logoutUser();
+                                },
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    );
+                  });
+            },
+          ),
+        ],
       ),
       body: Container(
         height: double.infinity,
@@ -100,15 +154,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   color: Colors.grey,
                                 )
                           : Material(
-                              // show new selected image file
-                              child: Image.file(
-                                image!,
-                                width: 160.0,
-                                height: 160.0,
-                                fit: BoxFit.cover,
-                              ),
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(125.0),
+                              color: Colors.transparent,
+                              child: CircleAvatar(
+                                radius: 80.0,
+                                backgroundImage: Image.file(
+                                  image!,
+                                ).image,
                               ),
                             ),
                       Positioned(
@@ -149,6 +200,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   name = nameTextEditingController.text;
                                   Navigator.of(context).pop();
                                 });
+                                uploadData('name');
                               },
                               controller: nameTextEditingController,
                             );
@@ -202,8 +254,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               onPressed: () {
                                 this.setState(() {
                                   about = aboutTextEditingController.text;
+                                  print(about);
                                   Navigator.of(context).pop();
                                 });
+                                uploadData('about');
                               },
                               controller: aboutTextEditingController,
                             );
@@ -246,25 +300,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: Text(
-                      'Update Profile',
-                      style: TextStyle(
-                        fontSize: 25.0,
-                        fontFamily: 'Roboto-Medium',
-                        color: Colors.white,
-                      ),
-                    ),
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.green),
-                      padding: MaterialStateProperty.all(EdgeInsets.all(10.0)),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.0)),
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ],
@@ -286,9 +321,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future getImage() async {
-    newImage =
-        (await ImagePicker().pickImage(source: ImageSource.gallery)) as File;
-
+    XFile? xFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    newImage = File(xFile!.path);
     if (newImage != null) {
       this.setState(() {
         this.image = newImage;
@@ -299,7 +333,62 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future uploadImage() async {
+    String mFileName = id;
     FirebaseStorage storage = FirebaseStorage.instance;
-    // Reference ref = storage.ref().child();
+    Reference ref = storage.ref().child(mFileName);
+    UploadTask uploadTask = ref.putFile(image!);
+    uploadTask.then((value) {
+      value.ref.getDownloadURL().then((newUrl) {
+        photoUrl = newUrl;
+        FirebaseFirestore.instance.collection('users').doc(id).update({
+          'photoUrl': photoUrl,
+        }).then((data) async {
+          await preferences.setString('photoUrl', photoUrl);
+          setState(() {
+            isLoading = false;
+          });
+          showSnack("Photo updated successfully.");
+        });
+      }, onError: (errorMessage) {
+        showSnack(errorMessage.toString());
+        setState(() {
+          isLoading = false;
+        });
+      });
+    }, onError: (errorMessage) {
+      setState(() {
+        isLoading = false;
+      });
+      showSnack(errorMessage.toString());
+    });
+  }
+
+  Future uploadData(String value) async {
+    FirebaseFirestore.instance.collection('users').doc(id).update({
+      '$value': value == 'name' ? name : about,
+    }).then((data) async {
+      await preferences.setString(value, value == 'name' ? name : about);
+      setState(() {
+        isLoading = false;
+      });
+      showSnack("${value == 'name' ? 'Name' : 'Bio'} updated successfully.");
+    });
+  }
+
+  showSnack(var message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
+  }
+
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+  Future<Null> logoutUser() async {
+    await FirebaseAuth.instance.signOut();
+    await googleSignIn.disconnect();
+    await googleSignIn.signOut();
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => MyApp()), (route) => false);
   }
 }
