@@ -10,6 +10,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:simplechat/utilities/capitilization.dart';
 
 import '../main.dart';
 
@@ -197,7 +198,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               length: 25,
                               onPressed: () {
                                 this.setState(() {
-                                  name = nameTextEditingController.text;
+                                  name = nameTextEditingController
+                                      .text.capitalizeFirstofEach;
                                   Navigator.of(context).pop();
                                 });
                                 uploadData('name');

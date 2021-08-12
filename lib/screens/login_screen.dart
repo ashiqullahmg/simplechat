@@ -93,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 label: Text(
                   'Signin with Google',
                   style: TextStyle(
-                    fontSize: 25.0,
+                    fontSize: 20.0,
                     fontFamily: 'Roboto-Medium',
                     color: Colors.black38,
                   ),
@@ -153,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
           'photoUrl': firebaseUser.photoURL,
           'id': firebaseUser.uid,
           'about': "I'm using Simple Chat",
-          'createAt': DateTime.now().millisecondsSinceEpoch.toString(),
+          'createAt': Timestamp.now(),
           'chattingWidth': null,
         });
         //writing to local
@@ -178,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
             'photoUrl', documentSnapshots[0]['photoUrl']);
         await preferences.setString('about', documentSnapshots[0]['about']);
       }
-      Fluttertoast.showToast(msg: 'Signed In');
+      showSnack('Signed In');
       Navigator.of(context).pushReplacement(
         new MaterialPageRoute(
           builder: (BuildContext context) {
@@ -191,10 +191,18 @@ class _LoginScreenState extends State<LoginScreen> {
       });
     } //Failed to signIn
     else {
-      Fluttertoast.showToast(msg: 'Try again, Sign in is failed');
+      showSnack('Try again, Sign in is failed');
       this.setState(() {
         isLoading = false;
       });
     }
+  }
+
+  showSnack(var message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
   }
 }

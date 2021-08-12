@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -5,8 +7,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:simplechat/components/progress.dart';
+import 'package:simplechat/components/usersList.dart';
 import 'package:simplechat/constants.dart';
 import 'package:simplechat/main.dart';
+import 'package:intl/intl.dart';
 import 'package:simplechat/screens/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,68 +24,125 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  late String searchValue = '';
+  bool isTapped = false;
+  bool isSearched = false;
+  var usersList;
+  late Future<QuerySnapshot> userFound;
   TextEditingController searchTextEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Text('Simple Chat'),
-          centerTitle: true,
-          actions: [
-            IconButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => SettingsScreen()));
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text('Simple Chat'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SettingsScreen()));
+              },
+              icon: Icon(FontAwesomeIcons.userCog))
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.all(5.0),
+              margin: EdgeInsets.all(0.0),
+              child: TextFormField(
+                onFieldSubmitted: (value) {
+                  setState(() {
+                    isTapped = false;
+                  });
                 },
-                icon: Icon(FontAwesomeIcons.userCog))
+                onTap: () {
+                  setState(() {
+                    isTapped = true;
+                  });
+                },
+                textCapitalization: TextCapitalization.words,
+                onChanged: (value) {
+                  setState(() {
+                    searchValue = value;
+                  });
+                  search();
+                },
+                decoration: kTextFieldDecoration.copyWith(
+                  labelText: 'Enter a full name',
+                ),
+                style: TextStyle(
+                  fontSize: 16.0,
+                  color: Colors.black38,
+                ),
+                controller: searchTextEditingController,
+              ),
+            ),
+            isSearched
+                ? Flexible(
+                    child: ListView.builder(
+                      itemCount: usersList.length,
+                      itemBuilder: (context, index) {
+                        return ChatList(
+                          currentUserId: widget.currentUserId,
+                          id: usersList[index]['id'],
+                          name: usersList[index]['name'],
+                          about: usersList[index]['about'],
+                          date: usersList[index]['createAt'].toDate(),
+                          photo: usersList[index]['photoUrl'],
+                        );
+                      },
+                    ),
+                  )
+                : isTapped
+                    ? linearProgress()
+                    : Text(''),
           ],
         ),
-        body: Column(
-          children: [
-            searchBar(),
-            TextButton.icon(
-              icon: Icon(FontAwesomeIcons.signOutAlt),
-              label: Text('Logout'),
-              onPressed: () {
-                logoutUser();
-              },
-            ),
-          ],
-        ));
+      ),
+    );
   }
 
   final GoogleSignIn googleSignIn = GoogleSignIn();
-  Future<Null> logoutUser() async {
-    await FirebaseAuth.instance.signOut();
-    await googleSignIn.disconnect();
-    await googleSignIn.signOut();
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => MyApp()), (route) => false);
-  }
 
-  Widget searchBar() {
-    return Container(
-      padding: EdgeInsets.all(5.0),
-      margin: EdgeInsets.all(0.0),
-      child: TextFormField(
-        decoration: kTextFieldDecoration.copyWith(
-            labelText: 'Search',
-            suffixIcon: IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.search,
-                size: 35.0,
-              ),
-            )),
-        style: TextStyle(
-          fontSize: 16.0,
-          color: Colors.black38,
-        ),
-        controller: searchTextEditingController,
+  displayUsersList() {}
+  showSnack(var message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
       ),
     );
+  }
+
+  getUsers(searchValue) {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .where('name', isEqualTo: searchValue)
+        .get();
+  }
+
+  search() {
+    setState(() {
+      isSearched = false;
+    });
+    userFound = getUsers(searchValue);
+    userFound.then((QuerySnapshot docs) {
+      if (docs.docs.isNotEmpty) {
+        setState(() {
+          isSearched = true;
+          usersList = docs.docs;
+        });
+      } else {
+        return linearProgress();
+      }
+    });
   }
 }

@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 
 class AlertDialogSettings extends StatelessWidget {
@@ -28,7 +26,6 @@ class AlertDialogSettings extends StatelessWidget {
         builder: (context) {
           return Container(
             width: MediaQuery.of(context).size.width - 0,
-            // key: _formKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
