@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -12,6 +12,7 @@ import 'package:simplechat/components/usersList.dart';
 import 'package:simplechat/constants.dart';
 import 'package:simplechat/main.dart';
 import 'package:intl/intl.dart';
+import 'package:simplechat/utilities/capitilization.dart';
 import 'package:simplechat/screens/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -24,6 +25,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  var queryResultSet = [];
+  var tempSearch = [];
   @override
   void initState() {
     super.initState();
@@ -72,9 +75,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 textCapitalization: TextCapitalization.words,
                 onChanged: (value) {
                   setState(() {
-                    searchValue = value;
+                    searchValue = value.capitalizeFirstofEach;
                   });
                   search();
+                  // initiateSearch();
                 },
                 decoration: kTextFieldDecoration.copyWith(
                   labelText: 'Enter a full name',
@@ -92,6 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       itemCount: usersList.length,
                       itemBuilder: (context, index) {
                         return ChatList(
+                          searchValue: searchValue,
                           currentUserId: widget.currentUserId,
                           id: usersList[index]['id'],
                           name: usersList[index]['name'],
@@ -125,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
   getUsers(searchValue) {
     return FirebaseFirestore.instance
         .collection('users')
-        .where('name', isEqualTo: searchValue)
+        .where('name', isGreaterThanOrEqualTo: searchValue)
         .get();
   }
 
@@ -145,4 +150,43 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
   }
+
+  // initiateSearch() {
+  //   if (searchValue.length == 0) {
+  //     setState(() {
+  //       queryResultSet = [];
+  //       tempSearch = [];
+  //       isSearched = true;
+  //     });
+  //   }
+  //   if (queryResultSet.length == 0 && searchValue.length == 1) {
+  //     getUsers2(searchValue).then((QuerySnapshot docs) {
+  //       if (docs.docs.isNotEmpty) {
+  //         setState(() {
+  //           isSearched = true;
+  //           usersList = docs.docs;
+  //         });
+  //       } else {
+  //         return linearProgress();
+  //       }
+  //     });
+  //   } else {
+  //     tempSearch = [];
+  //     queryResultSet.forEach((element) {
+  //       if (element['name'].startsWith(searchValue)) {
+  //         setState(() {
+  //           isSearched = true;
+  //           tempSearch.add(element);
+  //         });
+  //       }
+  //     });
+  //   }
+  // }
+
+  // getUsers2(searchValue) {
+  //   return FirebaseFirestore.instance
+  //       .collection('users')
+  //       .where('name', isEqualTo: searchValue.substring(0, 1).toUpperCase())
+  //       .get();
+  // }
 }

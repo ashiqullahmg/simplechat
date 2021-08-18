@@ -8,19 +8,23 @@ class ChatList extends StatelessWidget {
   final String about;
   final date;
   final String photo;
+  final String searchValue;
   ChatList(
       {required this.id,
       required this.currentUserId,
       required this.name,
       required this.about,
       required this.date,
-      required this.photo});
+      required this.photo,
+      required this.searchValue});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        currentUserId != id
+        currentUserId != id &&
+                name.startsWith(searchValue) &&
+                searchValue.isNotEmpty
             ? ListTile(
                 horizontalTitleGap: 5,
                 contentPadding: EdgeInsets.all(15),
