@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:simplechat/screens/chat_screen.dart';
 
 class ChatList extends StatelessWidget {
   final String id;
@@ -54,6 +55,7 @@ class ChatList extends StatelessWidget {
                 subtitle: Text(about),
                 onTap: () {
                   print(name);
+                  gotoChatScreen(context);
                 })
             : Divider(
                 thickness: 0,
@@ -65,5 +67,13 @@ class ChatList extends StatelessWidget {
         )
       ],
     );
+  }
+
+  void gotoChatScreen(BuildContext context) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ChatScreen(
+                receiverId: id, receiverAvatar: photo, receiverName: name)));
   }
 }

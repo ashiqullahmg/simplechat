@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:simplechat/constants.dart';
 import 'package:simplechat/screens/chat_screen.dart';
@@ -23,13 +25,13 @@ class MyApp extends StatelessWidget {
         accentColor: AppColor.colorPrimary2,
       ),
       title: 'Simple Chat',
-      initialRoute: LoginScreen.id,
-      routes: {
-        LoginScreen.id: (context) => LoginScreen(),
-        ChatScreen.id: (context) => ChatScreen(),
-        SettingsScreen.id: (context) => SettingsScreen(),
-        // HomeScreen.id: (context) => HomeScreen(),
-      },
+      // initialRoute: LoginScreen.id,
+      // routes: {
+      //   LoginScreen.id: (context) => LoginScreen(),
+      //   // ChatScreen.id: (context) => ChatScreen(),
+      //   SettingsScreen.id: (context) => SettingsScreen(),
+      //   // HomeScreen.id: (context) => HomeScreen(),
+      home: MyHomePage(),
     );
   }
 }
@@ -41,28 +43,54 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   @override
+  void initState() {
+    super.initState();
+
+    Timer(
+        Duration(seconds: 3),
+        () => Navigator.push(
+            context, MaterialPageRoute(builder: (context) => LoginScreen())));
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Simple Chat'),
-        centerTitle: true,
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.topRight,
-              colors: [
-                Colors.white60,
-                Theme.of(context).primaryColor,
-              ],
-            ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.topRight,
+            colors: [
+              Colors.blueAccent,
+              Theme.of(context).primaryColor,
+            ],
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Image(
+                image: AssetImage('images/logo.png'),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                'Simple Chat',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'CuteFont',
+                  fontSize: 50.0,
+                  color: Colors.orangeAccent,
+                ),
+              )
+            ],
           ),
         ),
       ),
-      backgroundColor: Theme.of(context).accentColor,
-      // body: Image(
-      //   image: AssetImage('images/emoji_2/pretttygirl(7).gif'),
-      // ),
     );
   }
 }

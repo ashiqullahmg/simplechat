@@ -11,7 +11,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:simplechat/utilities/capitilization.dart';
-
+import 'package:image_cropper/image_cropper.dart';
 import '../main.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -324,7 +324,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future getImage() async {
     XFile? xFile = await ImagePicker().pickImage(source: ImageSource.gallery);
-    newImage = File(xFile!.path);
+    // cropping starts here
+
+    File? croppedFile = await ImageCropper.cropImage(
+        sourcePath: xFile!.path,
+        aspectRatioPresets: Platform.isAndroid
+            ? [
+                CropAspectRatioPreset.square,
+              ]
+            : [
+                CropAspectRatioPreset.square,
+              ],
+        androidUiSettings: AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.square,
+            lockAspectRatio: true),
+        iosUiSettings: IOSUiSettings(
+          title: 'Cropper',
+        ));
+
+    // cropping ends here
+    newImage = croppedFile;
     if (newImage != null) {
       this.setState(() {
         this.image = newImage;

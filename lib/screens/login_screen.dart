@@ -67,16 +67,17 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         alignment: Alignment.center,
-        child: Padding(
-          padding: const EdgeInsets.all(50.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Image(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Flexible(
+              child: Image(
                 image: AssetImage('images/logo.png'),
               ),
-              Text(
+            ),
+            Flexible(
+              child: Text(
                 'Simple Chat',
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -85,37 +86,42 @@ class _LoginScreenState extends State<LoginScreen> {
                   color: Colors.orangeAccent,
                 ),
               ),
-              ElevatedButton.icon(
-                icon: Icon(
-                  FontAwesomeIcons.google,
-                  color: Colors.blueAccent,
-                ),
-                label: Text(
-                  'Signin with Google',
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontFamily: 'Roboto-Medium',
-                    color: Colors.black38,
+            ),
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.all(50.0),
+                child: ElevatedButton.icon(
+                  icon: Icon(
+                    FontAwesomeIcons.google,
+                    color: Colors.blueAccent,
                   ),
-                ),
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.white),
-                  padding: MaterialStateProperty.all(EdgeInsets.all(10.0)),
-                  shape: MaterialStateProperty.all(
-                    RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5.0)),
+                  label: Text(
+                    'Signin with Google',
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontFamily: 'Roboto-Medium',
+                      color: Colors.black38,
+                    ),
                   ),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.white),
+                    padding: MaterialStateProperty.all(EdgeInsets.all(10.0)),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0)),
+                    ),
+                  ),
+                  onPressed: () {
+                    singIn();
+                  },
                 ),
-                onPressed: () {
-                  singIn();
-                },
               ),
-              Padding(
-                padding: EdgeInsets.all((10.0)),
-                child: isLoading ? circularProgress() : null,
-              )
-            ],
-          ),
+            ),
+            Padding(
+              padding: EdgeInsets.all((10.0)),
+              child: isLoading ? circularProgress() : null,
+            )
+          ],
         ),
       ),
     );

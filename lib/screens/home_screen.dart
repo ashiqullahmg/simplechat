@@ -150,43 +150,4 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
   }
-
-  // initiateSearch() {
-  //   if (searchValue.length == 0) {
-  //     setState(() {
-  //       queryResultSet = [];
-  //       tempSearch = [];
-  //       isSearched = true;
-  //     });
-  //   }
-  //   if (queryResultSet.length == 0 && searchValue.length == 1) {
-  //     getUsers2(searchValue).then((QuerySnapshot docs) {
-  //       if (docs.docs.isNotEmpty) {
-  //         setState(() {
-  //           isSearched = true;
-  //           usersList = docs.docs;
-  //         });
-  //       } else {
-  //         return linearProgress();
-  //       }
-  //     });
-  //   } else {
-  //     tempSearch = [];
-  //     queryResultSet.forEach((element) {
-  //       if (element['name'].startsWith(searchValue)) {
-  //         setState(() {
-  //           isSearched = true;
-  //           tempSearch.add(element);
-  //         });
-  //       }
-  //     });
-  //   }
-  // }
-
-  // getUsers2(searchValue) {
-  //   return FirebaseFirestore.instance
-  //       .collection('users')
-  //       .where('name', isEqualTo: searchValue.substring(0, 1).toUpperCase())
-  //       .get();
-  // }
 }
