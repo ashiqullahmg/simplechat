@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "553994874071-kkmi036sv60i42ofpamucu7c3m2cdtt7.apps.googleusercontent.com",
+          "client_id": "553994874071-si9aunerr46a3g2k3lamuqncb8rvkdua.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.auideas.simplechat",
-            "certificate_hash": "427207d58c5610b560afb9953442aca7569262c1"
+            "certificate_hash": "f4e62647eac21c753c021343582134d1395d40dc"
           }
         },
         {

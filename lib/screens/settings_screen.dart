@@ -10,6 +10,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:simplechat/constants.dart';
 import 'package:simplechat/utilities/capitilization.dart';
 import 'package:image_cropper/image_cropper.dart';
 import '../main.dart';
@@ -327,6 +328,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     // cropping starts here
 
     File? croppedFile = await ImageCropper.cropImage(
+        cropStyle: CropStyle.circle,
         sourcePath: xFile!.path,
         aspectRatioPresets: Platform.isAndroid
             ? [
@@ -336,13 +338,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 CropAspectRatioPreset.square,
               ],
         androidUiSettings: AndroidUiSettings(
-            toolbarTitle: 'Cropper',
-            toolbarColor: Colors.deepOrange,
-            toolbarWidgetColor: Colors.white,
-            initAspectRatio: CropAspectRatioPreset.square,
-            lockAspectRatio: true),
+          toolbarTitle: 'Crop your photo',
+          toolbarColor: AppColor.colorPrimary1,
+          toolbarWidgetColor: Colors.white,
+          initAspectRatio: CropAspectRatioPreset.square,
+          lockAspectRatio: true,
+          cropFrameStrokeWidth: 5,
+        ),
         iosUiSettings: IOSUiSettings(
-          title: 'Cropper',
+          title: 'Crop your photo',
         ));
 
     // cropping ends here

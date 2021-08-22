@@ -23,3 +23,18 @@ const kTextFieldDecoration = InputDecoration(
     borderRadius: BorderRadius.all(Radius.circular(10.0)),
   ),
 );
+
+const kMessageTextFieldDecoration = InputDecoration(
+  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+  hintText: 'Message',
+  hintStyle: TextStyle(
+    color: Colors.white,
+  ),
+  border: InputBorder.none,
+);
+const kMessageContainerDecoration = BoxDecoration(
+  color: Colors.lightBlueAccent,
+  border: Border(
+    top: BorderSide(color: Colors.lightBlueAccent, width: 2.0),
+  ),
+);

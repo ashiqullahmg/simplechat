@@ -78,7 +78,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     searchValue = value.capitalizeFirstofEach;
                   });
                   search();
-                  // initiateSearch();
                 },
                 decoration: kTextFieldDecoration.copyWith(
                   labelText: 'Enter a full name',
