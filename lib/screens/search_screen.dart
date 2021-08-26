@@ -13,29 +13,26 @@ import 'package:simplechat/components/usersList.dart';
 import 'package:simplechat/constants.dart';
 import 'package:simplechat/main.dart';
 import 'package:intl/intl.dart';
-import 'package:simplechat/screens/search_screen.dart';
 import 'package:simplechat/utilities/capitilization.dart';
 import 'package:simplechat/screens/settings_screen.dart';
-import 'package:firebase_database/firebase_database.dart';
 
-class HomeScreen extends StatefulWidget {
+class SearchScreen extends StatefulWidget {
   final String currentUserId;
   static const String id = 'home_screen';
-  const HomeScreen({Key? key, required this.currentUserId}) : super(key: key);
+  const SearchScreen({Key? key, required this.currentUserId}) : super(key: key);
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _SearchScreenState createState() => _SearchScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _SearchScreenState extends State<SearchScreen> {
   var queryResultSet = [];
   var tempSearch = [];
   @override
   void initState() {
     super.initState();
-    searchPrevious();
   }
-  late bool isSearch = false;
+
   late String searchValue = '';
   bool isTapped = false;
   bool isSearched = false;
@@ -50,52 +47,66 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
 
-        title: Text('Simple Chat'),
-        actions: [
-          IconButton(
-              onPressed: () {
-                setState(() {
-                  isSearch = true;
-                });
-              },
-              icon: Icon(FontAwesomeIcons.search, size: 15.0,))
-        ],
+        title: Text('Search Users'),
       ),
       drawer: MoreDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
+            Container(
+              padding: EdgeInsets.all(5.0),
+              margin: EdgeInsets.all(0.0),
+              child: TextFormField(
+                onFieldSubmitted: (value) {
+                  setState(() {
+                    isTapped = false;
+                  });
+                },
+                onTap: () {
+                  setState(() {
+                    isTapped = true;
+                  });
+                },
+                textCapitalization: TextCapitalization.words,
+                onChanged: (value) {
+                  setState(() {
+                    searchValue = value.capitalizeFirstofEach;
+                  });
+                  search();
+                },
+                decoration: kTextFieldDecoration.copyWith(
+                  labelText: 'Enter a full name',
+                ),
+                style: TextStyle(
+                  fontSize: 16.0,
+                  color: Colors.black38,
+                ),
+                controller: searchTextEditingController,
+              ),
+            ),
             isSearched
                 ? Flexible(
-                    child: ListView.builder(
-                      itemCount: usersList.length,
-                      itemBuilder: (context, index) {
-                        return UsersList(
-                          searchValue: searchValue,
-                          currentUserId: widget.currentUserId,
-                          id: usersList[index]['id'],
-                          name: usersList[index]['name'],
-                          about: usersList[index]['about'],
-                          date: usersList[index]['createAt'].toDate(),
-                          photo: usersList[index]['photoUrl'],
-                        );
-                      },
-                    ),
-                  )
+              child: ListView.builder(
+                itemCount: usersList.length,
+                itemBuilder: (context, index) {
+                  return UsersList(
+                    searchValue: searchValue,
+                    currentUserId: widget.currentUserId,
+                    id: usersList[index]['id'],
+                    name: usersList[index]['name'],
+                    about: usersList[index]['about'],
+                    date: usersList[index]['createAt'].toDate(),
+                    photo: usersList[index]['photoUrl'],
+                  );
+                },
+              ),
+            )
                 : isTapped
-                    ? linearProgress()
-                    : Container(),
+                ? linearProgress()
+                : Container(),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.green.withOpacity(0.7),
-        child: Icon(Icons.person_add),
-        onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => SearchScreen(currentUserId: widget.currentUserId)));
-        },
       ),
     );
   }
@@ -133,15 +144,5 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
   }
-
-  Future searchPrevious() async{
-
-   // userFound =  FirebaseFirestore.instance
-   //      .collection('users')
-   //      .doc('chatWith')
-   //      .where('Ashiq Khan', isEqualTo: searchValue)
-   //      .get();
-  }
-
+  
 }
-

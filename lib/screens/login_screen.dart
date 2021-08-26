@@ -160,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
           'id': firebaseUser.uid,
           'about': "I'm using Simple Chat",
           'createAt': Timestamp.now(),
-          'chattingWidth': null,
+          'chattingWith': {},
         });
         //writing to local
         currentUser = firebaseUser;

@@ -48,57 +48,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Account Settings'),
-        centerTitle: true,
-        actions: [
-          TextButton.icon(
-            icon: Icon(
-              Icons.logout,
-              color: Colors.redAccent,
-              size: 30.0,
-            ),
-            label: Text(''),
-            onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      insetPadding: EdgeInsets.all(0),
-                      title: Text('Hello , $name,'),
-                      content: Text("Do you want to logout?"),
-                      actions: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(0.0),
-                              child: TextButton(
-                                child: Text("No"),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ),
-                            SizedBox(
-                              width: 6.0,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(0.0),
-                              child: TextButton(
-                                child: Text("Yes"),
-                                onPressed: () {
-                                  logoutUser();
-                                },
-                              ),
-                            )
-                          ],
-                        )
-                      ],
-                    );
-                  });
-            },
-          ),
-        ],
+        title: Text('Settings'),
       ),
       body: Container(
         height: double.infinity,

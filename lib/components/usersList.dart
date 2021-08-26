@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:simplechat/screens/chat_screen.dart';
 
-class ChatList extends StatelessWidget {
+class UsersList extends StatelessWidget {
   final String id;
   final String currentUserId;
   final String name;
@@ -10,7 +10,7 @@ class ChatList extends StatelessWidget {
   final date;
   final String photo;
   final String searchValue;
-  ChatList(
+  UsersList(
       {required this.id,
       required this.currentUserId,
       required this.name,
@@ -70,10 +70,12 @@ class ChatList extends StatelessWidget {
   }
 
   void gotoChatScreen(BuildContext context) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ChatScreen(
-                receiverId: id, receiverAvatar: photo, receiverName: name)));
+    Navigator.of(context).pushReplacement(
+      new MaterialPageRoute(
+        builder: (BuildContext context) {
+          return new ChatScreen(receiverId: id, receiverAvatar: photo, receiverName: name);
+        },
+      ),
+    );
   }
 }

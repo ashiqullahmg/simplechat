@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:simplechat/constants.dart';
-import 'package:simplechat/screens/chat_screen.dart';
-import 'package:simplechat/screens/home_screen.dart';
+
+
 import 'package:simplechat/screens/login_screen.dart';
-import 'package:simplechat/screens/settings_screen.dart';
+
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
