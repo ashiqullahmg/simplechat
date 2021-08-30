@@ -1,6 +1,5 @@
 # simplechat
-
-A new Flutter project.
+This app isn't the final or stable version. I have to do many things before claiming it a stable version. The code is simple and lengthy, I will refactor every class and function for the optimization of the application. There are some other funtions which should be done in a comming future. Some of them are, Saving the history of the chat in the home page, deleting messages history, deleting a specific message, blocking a user, adding request and so many. 
 
 ## Getting Started
 ## Screenshot
